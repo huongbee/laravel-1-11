@@ -80,7 +80,7 @@ Route::get('test',function(){
     'uses'=>'PageController@kiemtraMiddleware'
   ]);
 
-  Route::get('tao_sesion',[
+  Route::get('tao_session',[
     'as'=>'tao_sesion',
     'uses'=>'PageController@createSession'
   ]);
@@ -90,14 +90,14 @@ Route::get('test',function(){
     'uses'=>'PageController@delSession'
   ]);
 
-  Route::get('tao_bang',function(){
-    Schema::create('sanpham',function($table){
-      $table->increments('id');
-      $table->float('gia');
-      $table->string('mota',200);
-      $table->string('nhasx')->default('Sony');
+  Route::get('xoa_cot','PageController@getTaoBang');
+  Route::get('them_cot','PageController@getThemCot');
 
-    });
-    echo 'đã tạo bảng sanpham';
-
+  Route::get('sua-ten-bang','PageController@getSuaTen');
+  Route::get('xoabang',function(){
+    Schema::dropIfExists('product_type');
+    echo 'đã xóa';
   });
+
+
+  Route::get('get_data','PageController@getDataUser');

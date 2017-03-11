@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Http\Response;
 use Session;
+use Schema;
 
 class PageController extends Controller
 {
@@ -128,6 +129,36 @@ class PageController extends Controller
 			echo '<br>';
 			echo Session::get('giangvien');
 		}
+	}
+
+
+	public function getTaoBang(){
+		Schema::table('loaisanpham',function($table){
+			$table->dropColumn('name');
+		});
+		echo 'xóa cột thành công';
+	}
+
+	public function getThemCot(){
+		Schema::table('loaisanpham',function($table){
+			//$table->rememberToken();
+			$table->timestamps();
+		});
+		echo 'thêm cột  thành công';
+	}
+
+	public function getSuaTen(){
+		Schema::rename('loaisanpham', 'product_type');
+		echo 'sửa tên thành công';
+	}
+
+
+	public function getDataUser(){
+		//$users = \DB::table('users')->orderBy('id','desc')->first();
+		$users = \DB::table('users')->select('id','name');
+		$users2 = $users->addSelect('email')->where('id',9)
+																				->orWhere('name','Hương')->get();
+		dd($users2);
 	}
 
 }
