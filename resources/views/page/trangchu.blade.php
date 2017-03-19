@@ -45,15 +45,24 @@
 							?>
 								@for($i=0;$i<count($products);$i++)
 
-								<div class="col-sm-3">
+								<div class="col-sm-3" style="margin-bottom: 15px">
+
 									<div class="single-item">
+									@if($products[$i]['promotion_price']!=0)
+									<div class="ribbon-wrapper"><div class="ribbon sale">Sale</div></div>
+									@endif
 										<div class="single-item-header">
 											<a href="product.html"><img src="source/image/product/{{$products[$i]['image']}}" alt="" height="250px"></a>
 										</div>
 										<div class="single-item-body">
 											<p class="single-item-title">{{$products[$i]['name']}}</p>
-											<p class="single-item-price">
-												<span>{{$products[$i]['unit_price']}}</span>
+											<p class="single-item-price" style="font-size: 18px">
+											@if($products[$i]['promotion_price']!=0)
+												<span class="flash-del">{{number_format($products[$i]['unit_price'])}} đồng</span>
+												<span class="flash-sale">{{number_format($products[$i]['promotion_price'])}} đồng</span>
+											@else 
+												<span class="flash-sale">{{number_format($products[$i]['unit_price'])}} đồng</span>
+											@endif
 											</p>
 										</div>
 										<div class="single-item-caption">

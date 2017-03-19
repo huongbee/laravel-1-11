@@ -33,24 +33,24 @@
 
 					<div class="beta-comp">
 						<div class="cart">
-							<div class="beta-select"><i class="fa fa-shopping-cart"></i> Giỏ hàng (Trống) <i class="fa fa-chevron-down"></i></div>
+							<div class="beta-select"><i class="fa fa-shopping-cart"></i> Giỏ hàng (<span id="tongsl">@if(Session::has('cart')){{$totalQty}}@else Trống @endif</span>) <i class="fa fa-chevron-down"></i></div>
 							<div class="beta-dropdown cart-body">
 								@if(Session::has('cart'))
 									@foreach($product_cart as $product)
-								<div class="cart-item">
-									<a class="cart-item-delete" href="#"><i class="fa fa-times"></i></a>
+								<div class="cart-item" id="cart-item{{$product['item']['id']}}">
+									<a class="cart-item-delete" value="{{$product['item']['id']}}" soluong="{{$product['qty']}}"><i class="fa fa-times"></i></a>
 									<div class="media">
 										<a class="pull-left" href="#"><img src="source/image/product/{{$product['item']['image']}}" alt=""></a>
 										<div class="media-body">
 											<span class="cart-item-title">{{$product['item']['name']}}</span>
-											<span class="cart-item-amount">{{$product['qty']}}*<span>{{$product['item']['promotion_price']}}</span></span>
+											<span class="cart-item-amount">{{$product['qty']}}*<span id="dongia{{$product['item']['id']}}" value="@if($product['item']['promotion_price']==0){{($product['item']['unit_price'])}}@else {{($product['item']['promotion_price'])}}@endif">@if($product['item']['promotion_price']==0){{number_format($product['item']['unit_price'])}}@else {{number_format($product['item']['promotion_price'])}}@endif</span></span>
 										</div>
 									</div>
 								</div>
-							@endforeach
-							@endif
+									@endforeach
+								@endif
 								<div class="cart-caption">
-									<div class="cart-total text-right">Tổng tiền: <span class="cart-total-value">$34.55</span></div>
+									<div class="cart-total text-right">Tổng tiền: <span class="cart-total-value" value="@if(Session::has('cart')){{($totalPrice)}}@else 0 @endif">@if(Session::has('cart')){{number_format($totalPrice)}}@else 0 @endif đồng</span></div>
 									<div class="clearfix"></div>
 
 									<div class="center">
@@ -87,3 +87,35 @@
 			</div> <!-- .container -->
 		</div> <!-- .header-bottom -->
 	</div> <!-- #header -->
+	<script src="source/assets/dest/js/jquery.js"></script>
+<script>
+$(document).ready(function($) {    
+	
+	$('.cart-item-delete').click(function(){
+		var id = $(this).attr('value');
+		var route = "{{route('del-cart',':id_sp')}}";
+		route = route.replace(':id_sp',id);
+
+		var soluong = $(this).attr('soluong')
+		var dongia = $('#dongia'+id).attr('value')
+		var tongdonggia = $('.cart-total-value').attr('value');
+		
+		$.ajax({
+			url: route,
+			type: 'get',
+			data: {id:id},
+			success:function(){
+				var tongsl = $('#tongsl').html();
+				$('#tongsl').html(parseInt(tongsl)-parseInt(soluong));
+
+				$('.cart-total-value').html(parseInt(tongdonggia)-(parseInt(soluong)*parseInt(dongia))+' đồng');
+				$('.cart-total-value').attr('value',parseInt(tongdonggia)-(parseInt(soluong)*parseInt(dongia)));
+				$('#cart-item'+id).hide();
+			},
+			error:function(data){
+				console.log(data)
+			}
+		})
+	})
+})
+</script>

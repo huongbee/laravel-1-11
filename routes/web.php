@@ -28,3 +28,8 @@ Route::get('mua-hang/{id}',[
 	'as'=>'add-to-cart',
 	'uses'=>'PageController@getAddToCart'
 ]);
+
+Route::get('xoa-phan-tu-gio-hang/{id}',[
+	'as'=>'del-cart',
+	'uses'=>'PageController@getDelItemCart'
+]);
