@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
 
-        view()->composer('header',function($view){
+        view()->composer(['header','page.dat_hang'],function($view){
           if(Session::has('cart')){
             $oldCart = Session::get('cart');
     	    $cart = new Cart($oldCart);

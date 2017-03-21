@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('index',[
+Route::get('/',[
   'as'=>'index',
   'uses'=>'PageController@getIndex'
 ]);
@@ -32,4 +32,15 @@ Route::get('mua-hang/{id}',[
 Route::get('xoa-phan-tu-gio-hang/{id}',[
 	'as'=>'del-cart',
 	'uses'=>'PageController@getDelItemCart'
+]);
+
+Route::get('dat-hang',[
+	'as'=>'dathang',
+	'uses'=>'PageController@getCheckout'
+]);
+
+
+Route::post('dat-hang',[
+	'as'=>'dathang',
+	'uses'=>'PageController@postCheckout'
 ]);
