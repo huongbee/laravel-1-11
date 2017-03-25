@@ -1,0 +1,1 @@
+<a href="{{route('send-to-mail',[$nguoidung->id,$nguoidung->remember_token])}}">Nhấp vào đây để kích hoạt tài khoản</a>

@@ -18,6 +18,10 @@ use App\TypeProducts;
 use App\Customer;
 use App\Bill;
 use App\BillDetail;
+use Mail;
+use Hash;
+use App\User;
+use Auth;
 
 class PageController extends Controller
 {
@@ -55,11 +59,11 @@ class PageController extends Controller
 		return view('page.chitiet');
 	}
 
-	public function getAddToCart(Request $req, $id){
+	public function getAddToCart(Request $req, $id, $soluong){
 		$product = Product::find($id);
 		$oldCart = Session('cart') ? Session('cart') : null;
 		$cart = new Cart($oldCart);
-		$cart->add($product, $product->id);
+		$cart->add($product, $product->id, $soluong);
 
 	  	$req->session()->put('cart', $cart);
 	  	return redirect()->back();
@@ -124,4 +128,93 @@ class PageController extends Controller
 		return redirect()->back()->with('thongbao','Đặt hàng thành công');
 	}
 
+
+	public function sendMail(){
+		$data = array();
+		Mail::send('page.mail',$data, function ($message)
+		{
+			$message->from('huonghuong08.php@gmail.com', 'Ngọc Hương');
+			$message->to('huonghuong08.php@gmail.com','Hương Hương');
+			$message->subject('Test Mail');
+		});
+		echo 'đã gửi';
+	}
+
+	public function getRegister(){
+		return view('page.dangki');
+	}
+
+	public function postRegister(Request $req){
+		$this->validate($req,
+			[
+				'email'=>'required|email',
+				'full_name'=>'required',
+				'phone'=>'numeric',
+				'password'=>'required|min:6|max:20',
+				're_password'=>'required|same:password'
+			],
+			[
+				'email.required'=>'Vui lòng nhập email',
+				'email.email'=>'Email không đúng định dạng',
+				'phone.numeric'=>'Điện thoại phải thuộc kiểu số',
+				'password.redirect'=>'Vui lòng nhập mật khẩu',
+				'password.min'=>'Mật khẩu ít nhất 6 kí tự',
+				're_password.same'=>'Mật khẩu không giống nhau'
+			]
+		);
+		$user = new User();
+		$user->full_name = $req->full_name;
+		$user->email = $req->email;
+		$user->password = Hash::make($req->password);
+		$user->phone = $req->phone;
+		$user->address = $req->address;
+		$user->remember_token = csrf_token();
+		$user->save();
+		Mail::send('page.mail',['nguoidung'=>$user], function ($message) use($user)
+		{
+			$message->from('huonghuong08.php@gmail.com', "Baker's Alley");
+			$message->to($user->email,$user->full_name);
+			$message->subject('Xác nhận tài khoản');
+		});
+		return redirect()->back()->with('thongbao','Đăng kí thành công, Kiểm tra mail để kích hoạt');
+	}
+	public function activeUser($id,$token){
+		$user = User::where([
+								['id','=',$id],
+								['remember_token','=',$token]
+							])->first();
+		if($user){
+			$user->active = 1;
+			$user->save();
+			return redirect()->route('dangki')->with(['thanhcong'=>'Đã kích hoạt tài khoản']);
+		}
+
+	}
+
+	public function getLogin(){
+		if(Auth::check()){
+			return redirect()->route('index');
+		}
+		else{
+			return view('page.dangnhap');
+		}
+	}
+
+	public function postLogin(Request $req){
+		if(Auth::attempt(['email'=>$req->email,'password'=>$req->password,'active'=>1])){
+				return redirect()->route('index');
+		}
+		else{
+			return redirect()->back()->with('thatbai','Sai thông tin đăng nhập');
+		}
+	}
+	public function getLogout(){
+		Auth::logout();
+		return redirect()->route('index');
+	}
+
+	public function getSearch(Request $req){
+		$product = Product::where('name','like','%'.$req->keyword.'%')->get();
+		return view('page.ajax',compact('product'));
+	}
 }

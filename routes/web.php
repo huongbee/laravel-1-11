@@ -24,7 +24,7 @@ Route::get('chi-tiet-san-pham',[
 	'uses'=>'PageController@getChitiet'
 ]);
 
-Route::get('mua-hang/{id}',[
+Route::get('mua-hang/{id}/{soluong}',[
 	'as'=>'add-to-cart',
 	'uses'=>'PageController@getAddToCart'
 ]);
@@ -43,4 +43,39 @@ Route::get('dat-hang',[
 Route::post('dat-hang',[
 	'as'=>'dathang',
 	'uses'=>'PageController@postCheckout'
+]);
+
+Route::get('gui-mail','PageController@sendMail');
+
+Route::get('dang-ki',[
+	'as'=>'dangki',
+	'uses'=>'PageController@getRegister'
+]);
+
+Route::post('dang-ki',[
+	'as'=>'dangki',
+	'uses'=>'PageController@postRegister'
+]);
+Route::get('send-to-mail/{id}/{token}',[
+	'as'=>'send-to-mail',
+	'uses'=>'PageController@activeUser'
+]);
+
+Route::get('dang-nhap',[
+	'as'=>'dangnhap',
+	'uses'=>'PageController@getLogin'
+]);
+
+Route::post('dang-nhap',[
+	'as'=>'dangnhap',
+	'uses'=>'PageController@postLogin'
+]);
+
+Route::get('dang-xuat',[
+	'as'=>'dangxuat',
+	'uses'=>'PageController@getLogout'
+]);
+Route::get('tim-kiem',[
+	'as'=>'search',
+	'uses'=>'PageController@getSearch'
 ]);
